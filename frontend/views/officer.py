@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
 import pandas as pd
-import plotly.express as px
 import textwrap
 
 try:
@@ -45,26 +44,12 @@ def show_officer_portal():
                         col1, col2 = st.columns(2)
                         with col1:
                             st.write("#### Complaints by Category")
-                            cat_counts = df["category"].value_counts().reset_index()
-                            cat_counts.columns = ["Category", "Count"]
-                            fig_bar = px.bar(cat_counts, x="Count", y="Category", orientation="h", color="Category", template="plotly_dark")
-                            fig_bar.update_layout(showlegend=False, margin=dict(l=10, r=10, t=10, b=10))
-                            st.plotly_chart(fig_bar, use_container_width=True)
+                            cat_counts = df["category"].value_counts()
+                            st.bar_chart(cat_counts)
                         with col2:
                             st.write("#### Complaints Status Breakdown")
-                            status_counts = df["status"].value_counts().reset_index()
-                            status_counts.columns = ["Status", "Count"]
-                            fig_pie = px.pie(
-                                status_counts,
-                                values="Count",
-                                names="Status",
-                                template="plotly_dark",
-                                color="Status",
-                                color_discrete_map={"Pending": "#fbbf24", "In Progress": "#60a5fa", "Resolved": "#34d399", "Rejected": "#f87171"},
-                                hole=0.4
-                            )
-                            fig_pie.update_layout(margin=dict(l=10, r=10, t=10, b=10))
-                            st.plotly_chart(fig_pie, use_container_width=True)
+                            status_counts = df["status"].value_counts()
+                            st.bar_chart(status_counts)
                     else:
                         st.info("No complaint charts available yet.")
             else:
