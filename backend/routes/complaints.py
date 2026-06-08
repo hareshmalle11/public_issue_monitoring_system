@@ -1,25 +1,20 @@
-<<<<<<< HEAD
+
 from fastapi import APIRouter, HTTPException, UploadFile, File
 import os
 import shutil
 import requests
 from datetime import datetime, timezone
 from uuid import uuid4
-
-=======
 from datetime import datetime, timezone
 from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
-
->>>>>>> 80059c2b04c7ac3595f5aa0c1ea637f596fe3064
 from schemas import (
     ComplaintCreateRequest,
     ComplaintCreateResponse,
     ComplaintPredictRequest,
     ComplaintPrediction,
     ComplaintStatusUpdate,
-<<<<<<< HEAD
     ComplaintReopenRequest,
 )
 from services.ml_predictor import get_predictor
@@ -59,7 +54,6 @@ def upload_file(file: UploadFile = File(...)) -> dict:
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Local fallback upload failed: {e}")
 
-=======
 )
 from services.departments import get_or_create_department, increment_department_complaints
 from services.ml_predictor import get_predictor
@@ -68,17 +62,12 @@ from services.supabase_client import SupabaseRestError, supabase
 
 router = APIRouter()
 
->>>>>>> 80059c2b04c7ac3595f5aa0c1ea637f596fe3064
 
 def generate_ticket_number() -> str:
     today = datetime.now(timezone.utc).strftime("%Y%m%d")
     suffix = uuid4().hex[:6].upper()
     return f"PI-{today}-{suffix}"
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 80059c2b04c7ac3595f5aa0c1ea637f596fe3064
 @router.post("/predict", response_model=ComplaintPrediction)
 def predict_complaint(request: ComplaintPredictRequest) -> ComplaintPrediction:
     try:
@@ -92,10 +81,7 @@ def predict_complaint(request: ComplaintPredictRequest) -> ComplaintPrediction:
             detail=f"Prediction failed: {exc}",
         ) from exc
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 80059c2b04c7ac3595f5aa0c1ea637f596fe3064
 @router.post("/", response_model=ComplaintCreateResponse)
 def create_complaint(request: ComplaintCreateRequest) -> ComplaintCreateResponse:
     prediction = predict_complaint(
@@ -103,16 +89,11 @@ def create_complaint(request: ComplaintCreateRequest) -> ComplaintCreateResponse
     )
 
     try:
-<<<<<<< HEAD
-=======
-        department = get_or_create_department(prediction.category)
->>>>>>> 80059c2b04c7ac3595f5aa0c1ea637f596fe3064
         grievance = supabase.insert(
             "grievances",
             {
                 "ticket_number": generate_ticket_number(),
                 "user_id": request.user_id,
-<<<<<<< HEAD
                 "complaint_text": request.complaint_text,
                 "category": prediction.category,
                 "priority": prediction.priority,
@@ -121,21 +102,15 @@ def create_complaint(request: ComplaintCreateRequest) -> ComplaintCreateResponse
                 "address": request.address,
                 "landmark": request.landmark,
                 "image_url": request.image_url,
-=======
                 "department_id": department["department_id"],
                 "complaint_text": request.complaint_text,
                 "location": request.location,
                 "priority": prediction.priority,
                 "status": "Pending",
->>>>>>> 80059c2b04c7ac3595f5aa0c1ea637f596fe3064
                 "submission_date": datetime.now(timezone.utc).isoformat(),
                 "resolved_date": None,
             },
         )
-<<<<<<< HEAD
-=======
-        increment_department_complaints(department)
->>>>>>> 80059c2b04c7ac3595f5aa0c1ea637f596fe3064
     except SupabaseRestError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -145,39 +120,21 @@ def create_complaint(request: ComplaintCreateRequest) -> ComplaintCreateResponse
         prediction=prediction,
     )
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 80059c2b04c7ac3595f5aa0c1ea637f596fe3064
 @router.get("/health")
 def complaints_health() -> dict[str, str]:
     return {"status": "complaints routes ready"}
 
-<<<<<<< HEAD
-@router.get("/")
-def list_complaints(
-    user_id: int | None = None,
-    locality: str | None = None,
-=======
 
 @router.get("/")
 def list_complaints(
     user_id: int | None = None,
     department_id: int | None = None,
->>>>>>> 80059c2b04c7ac3595f5aa0c1ea637f596fe3064
     status: str | None = None,
 ) -> list[dict]:
     params = {"select": "*", "order": "submission_date.desc"}
 
     if user_id is not None:
         params["user_id"] = f"eq.{user_id}"
-<<<<<<< HEAD
-    if locality is not None:
-        params["locality"] = f"eq.{locality}"
-=======
-    if department_id is not None:
-        params["department_id"] = f"eq.{department_id}"
->>>>>>> 80059c2b04c7ac3595f5aa0c1ea637f596fe3064
     if status:
         params["status"] = f"eq.{status}"
 
@@ -185,11 +142,6 @@ def list_complaints(
         return supabase.select("grievances", params=params)
     except SupabaseRestError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 80059c2b04c7ac3595f5aa0c1ea637f596fe3064
 @router.get("/{grievance_id}")
 def get_complaint(grievance_id: int) -> dict:
     rows = supabase.select(
@@ -198,21 +150,15 @@ def get_complaint(grievance_id: int) -> dict:
     )
     if not rows:
         raise HTTPException(status_code=404, detail="Complaint not found")
-<<<<<<< HEAD
-    return rows[0]
-
-=======
 
     return rows[0]
 
 
->>>>>>> 80059c2b04c7ac3595f5aa0c1ea637f596fe3064
 @router.patch("/{grievance_id}/status")
 def update_complaint_status(
     grievance_id: int,
     request: ComplaintStatusUpdate,
 ) -> dict:
-<<<<<<< HEAD
     # Fetch old status first for logging
     try:
         old_grievance = get_complaint(grievance_id)
@@ -289,7 +235,6 @@ def reopen_complaint(grievance_id: int, request: ComplaintReopenRequest) -> dict
         return updated
     except SupabaseRestError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
-=======
     payload = {"status": request.status}
 
     if request.status.lower() == "resolved":
@@ -304,4 +249,4 @@ def reopen_complaint(grievance_id: int, request: ComplaintReopenRequest) -> dict
         raise HTTPException(status_code=404, detail="Complaint not found")
 
     return updated
->>>>>>> 80059c2b04c7ac3595f5aa0c1ea637f596fe3064
+

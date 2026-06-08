@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException
-<<<<<<< HEAD
 from services.supabase_client import SupabaseRestError, supabase
 
 router = APIRouter()
@@ -42,8 +41,6 @@ def dashboard_summary(locality: str | None = None) -> dict:
         except Exception as e:
             print(f"Warning: Failed to fetch reopen logs for summary calculation: {e}")
 
-=======
-
 from schemas import DepartmentCreateRequest, DepartmentResponse
 from services.supabase_client import SupabaseRestError, supabase
 
@@ -56,12 +53,10 @@ def dashboard_summary() -> dict:
     try:
         grievances = supabase.select("grievances", params={"select": "*"})
         departments = supabase.select("departments", params={"select": "*"})
->>>>>>> 80059c2b04c7ac3595f5aa0c1ea637f596fe3064
     except SupabaseRestError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     return {
-<<<<<<< HEAD
         "total_complaints": total,
         "pending_complaints": pending,
         "in_progress_complaints": in_progress,
@@ -85,7 +80,6 @@ def list_departments() -> list[dict]:
         {"department_id": 7, "department_name": "Public Property"},
         {"department_id": 8, "department_name": "Environment"}
     ]
-=======
         "total_complaints": len(grievances),
         "open_complaints": len([row for row in grievances if row.get("status") != "Resolved"]),
         "resolved_complaints": len([row for row in grievances if row.get("status") == "Resolved"]),
@@ -106,4 +100,3 @@ def create_department(request: DepartmentCreateRequest) -> DepartmentResponse:
         {"department_name": request.department_name, "number_of_complaints": 0},
     )
     return DepartmentResponse(**row)
->>>>>>> 80059c2b04c7ac3595f5aa0c1ea637f596fe3064
