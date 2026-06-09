@@ -1,3 +1,11 @@
+fastapi
+uvicorn[standard]
+tensorflow
+numpy
+pydantic
+requests
+python-dotenv
+python-multipart
 streamlit
 requests
 pandas
