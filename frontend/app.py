@@ -6,6 +6,7 @@ import streamlit as st
 FRONTEND_DIR = Path(__file__).resolve().parent
 if str(FRONTEND_DIR) not in sys.path:
     sys.path.insert(0, str(FRONTEND_DIR))
+# importing libraries
 
 import style
 from config import API_URL
