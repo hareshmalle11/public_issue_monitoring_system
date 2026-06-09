@@ -11,8 +11,8 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import tokenizer_from_json
 
 
-BASE_DIR = Path(__file__).resolve().parents[2]
-MODEL_DIR = BASE_DIR / "ml-service" / "saved_model"
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+MODEL_DIR = BACKEND_DIR / "ml_model"
 MODEL_PATH = MODEL_DIR / "grievance_bilstm_multi_task.keras"
 TOKENIZER_PATH = MODEL_DIR / "tokenizer.json"
 CONFIG_PATH = MODEL_DIR / "training_config.json"
@@ -44,7 +44,7 @@ class GrievancePredictor:
         if missing_paths:
             missing = ", ".join(str(path) for path in missing_paths)
             raise FileNotFoundError(
-                f"Missing ML artifact(s): {missing}. Run ml-service/train.py first."
+                f"Missing ML artifact(s): {missing}. Add the trained artifacts to backend/ml_model."
             )
 
     def predict(self, complaint_text: str) -> dict[str, float | str]:

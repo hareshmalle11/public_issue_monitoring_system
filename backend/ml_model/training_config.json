@@ -1,0 +1,27 @@
+{
+  "dataset": "C:\\Users\\hares\\OneDrive\\Desktop\\public_issue_monitoring_system\\ml-service\\grievance_dataset_70k_merged.csv",
+  "model_path": "C:\\Users\\hares\\OneDrive\\Desktop\\public_issue_monitoring_system\\ml-service\\saved_model\\grievance_bilstm_multi_task.keras",
+  "rows": 70000,
+  "vocab_size": 10000,
+  "max_length": 100,
+  "embedding_dim": 128,
+  "lstm_units": 128,
+  "dropout": 0.3,
+  "batch_size": 64,
+  "epochs": 15,
+  "category_classes": [
+    "Water",
+    "Roads",
+    "Electricity",
+    "Sanitation",
+    "Drainage",
+    "Traffic",
+    "Public Property",
+    "Environment"
+  ],
+  "priority_classes": [
+    "Low",
+    "Medium",
+    "High"
+  ]
+}
